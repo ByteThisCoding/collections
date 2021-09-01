@@ -8,7 +8,7 @@ import { iComparable } from "./comparable";
 export interface iSortedList<
     ComparisonType,
     DataType extends ComparisonType = ComparisonType
-> extends Iterator<DataType> {
+    > extends Iterator<DataType> {
     /**
      * Get the length of the list
      */
@@ -51,12 +51,12 @@ export interface iSortedList<
      * @param callback : map callback to use
      */
     map<
-        NewComparisonType = ComparisonType,
+        NewComparisonType,
         NewDataType extends NewComparisonType = NewComparisonType
     >(
-        sortFunc: (a: NewComparisonType, b: NewComparisonType) => number,
+        sortFunc: <NewComparisonType>(a: NewComparisonType, b: NewComparisonType) => number,
         callback: (item: DataType, iteratorIndex: number) => NewDataType
-    ): iSortedList<NewComparisonType, NewDataType>;
+    ): iSortedList<NewComparisonType, NewDataType>
 
     /**
      * Return a sorted list based on this one with certain elements removed

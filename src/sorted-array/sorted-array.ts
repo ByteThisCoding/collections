@@ -111,7 +111,7 @@ export class SortedArray<
      * @param callback : map callback to use
      */
     map<
-        NewComparisonType = ComparisonType,
+        NewComparisonType,
         NewDataType extends NewComparisonType = NewComparisonType
     >(
         sortFunc: (a: NewComparisonType, b: NewComparisonType) => number,
@@ -121,7 +121,7 @@ export class SortedArray<
             sortFunc
         );
         this.items.forEach((item, index) => {
-            const newItem: NewDataType = callback(item, index);
+            const newItem = callback(item, index);
             sortedAr.add(newItem);
         })
         return sortedAr;
@@ -131,7 +131,7 @@ export class SortedArray<
      * Return a sorted list based on this one with certain elements removed
      * @param callback 
      */
-    filter(callback: (item: DataType, iteratorIndex: number) => boolean): iSortedList<ComparisonType, DataType> {
+    filter(callback: (item: DataType, iteratorIndex: number) => boolean): SortedArray<ComparisonType, DataType> {
         const filteredAr = this.items.filter((item, index) => callback(item, index));
         const newSortedArray = new SortedArray<ComparisonType, DataType>(this.compare);
         //since we know this list is guaranteed to still be sorted

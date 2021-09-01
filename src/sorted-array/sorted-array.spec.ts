@@ -292,4 +292,33 @@ describe("SortedArray", () => {
 
         expect(numHit).toBe(testItems.length);
     });
+
+    it("should map list to new list", () => {
+        const strAr = ["zz", "yyyyyy", "x"];
+        const numAr = strAr.map(str => str.length).sort((a, b) => a - b);
+
+        const stringSortedList = new SortedArray<string>(
+            SortedArray.compareStrings,
+            strAr
+        );
+        const mappedSortedList = stringSortedList.map<number>(
+            SortedArray.compareNumbers,
+            (str: string) => str.length
+        );
+
+        expect(mappedSortedList.toArray()).toStrictEqual(numAr);
+    });
+
+    it("should filter list", () => {
+        const list = [231, 57498, 12, 2, 456, 7, 65465];
+        const expectedFilteredSorted = list.filter(item => item % 2 === 0).sort((a, b) => a - b);
+        
+        const sortedList = new SortedArray(
+            SortedArray.compareNumbers,
+            list
+        );
+
+        const filteredList = sortedList.filter(item => item % 2 === 0);
+        expect(filteredList.toArray()).toStrictEqual(expectedFilteredSorted);
+    })
 });
