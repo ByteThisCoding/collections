@@ -1,6 +1,11 @@
 # collections
 A library which provides different collection objects, such as SortedArray
 
+![Coverage lines](./coverage/badge-lines.svg)
+![Coverage functions](./coverage/badge-functions.svg)
+![Coverage branches](./coverage/badge-branches.svg)
+![Coverage statements](./coverage/badge-statements.svg)
+
 ## SortedList + SortedArray
 The SortedArray implementation, based on the SortedList abstraction, lets us work with a list which is sorted at all times. Thus, we can perform retrievals using binary search in *O(logn)* time instead of *O(n)* time. The abstraction is based on three main concepts:
 * **ComparableType**: the minimum type definition needed to run a comparison against two elements in the list.
