@@ -68,4 +68,9 @@ export interface iSortedList<
      * Return a copy of this sorted array as a basic list
      */
     toArray(): DataType[];
+
+    /**
+     * Deep clone this object
+     */
+    clone(): iSortedList<ComparisonType, DataType>;
 }

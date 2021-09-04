@@ -1,3 +1,4 @@
+import { Clone } from "@byte-this/funscript";
 import { iComparable } from "../models/comparable";
 import { iSortedList } from "../models/sorted-array";
 
@@ -160,6 +161,17 @@ export class SortedArray<
 
     toArray(): DataType[] {
         return [...this.items];
+    }
+
+    /**
+     * Deep clone this object
+     */
+    clone(): SortedArray<ComparisonType, DataType> {
+        const newItem = new SortedArray<ComparisonType, DataType>(
+            this.compare
+        );
+        newItem.items = Clone(this.items);
+        return newItem;
     }
 
     private findIndex(item: ComparisonType): {
