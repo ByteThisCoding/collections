@@ -1,6 +1,6 @@
 import { Clone } from "@byte-this/funscript";
 import { iComparable } from "../models/comparable";
-import { iSortedList } from "../models/sorted-array";
+import { iSortedList } from "../models/sorted-list";
 
 export class SortedArray<
     ComparisonType,
@@ -139,6 +139,30 @@ export class SortedArray<
         //we can apply directly to the new instance
         newSortedArray.items = filteredAr;
         return newSortedArray;
+    }
+
+    /**
+     * Get the intersection between this list and another
+     * @param list 
+     */
+    getIntersectionWith(list: Iterable<DataType>): iSortedList<ComparisonType, DataType> {
+        const intersectionList = new SortedArray<ComparisonType, DataType>(
+            this.compare
+        );
+        for (let listItem of list) {
+            if (this.contains(listItem)) {
+                intersectionList.add(listItem);
+            }
+        }
+        return intersectionList;
+    }
+
+    /**
+     * Check if this has the same elements as another list (not necessarily in the same order)
+     * @param list 
+     */
+    hasSameElementsAs(list: Iterable<DataType>): boolean {
+        return this.getIntersectionWith(list).length === this.length;
     }
 
     /**

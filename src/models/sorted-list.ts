@@ -73,4 +73,16 @@ export interface iSortedList<
      * Deep clone this object
      */
     clone(): iSortedList<ComparisonType, DataType>;
+
+    /**
+     * Get the intersection between this list and another
+     * @param list 
+     */
+    getIntersectionWith(list: Iterable<DataType>): iSortedList<ComparisonType, DataType>;
+
+    /**
+     * Check if this has the same elements as another list (not necessarily in the same order)
+     * @param list 
+     */
+    hasSameElementsAs(list: Iterable<DataType>): boolean;
 }

@@ -320,5 +320,23 @@ describe("SortedArray", () => {
 
         const filteredList = sortedList.filter(item => item % 2 === 0);
         expect(filteredList.toArray()).toStrictEqual(expectedFilteredSorted);
-    })
+    });
+
+    it("should get the intersection between two lists", () => {
+
+        const strA = ["abc", "d", "ef"];
+
+        const strB = new SortedArray<string>(
+            SortedArray.compareStrings,
+            ["abc", "d", "g"]
+        );
+
+        const intersection = strB.getIntersectionWith(strA);
+        expect(intersection.length).toBe(2);
+
+        expect(strB.hasSameElementsAs(strA)).toBe(false);
+        expect(strB.hasSameElementsAs(strB)).toBe(true);
+
+    });
+
 });

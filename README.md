@@ -23,3 +23,6 @@ The following comparers are available as static methods on the SortedArray class
 * **compareDates**: compare as *+a - +b*
 * **compareFromComparable**: compare as *a.compareTo(b)**, anything which implements the *iComparable* interface
 * **compareFromProperty**: we can compare based on a single property which exists on *ComparableType* with the given comparer method
+
+## Equality Set
+The EqualitySet implementation extends the SortedArray and provides the additional benefit that only unique items will be added to the set. The instance is constructed in the same way that a SortedArray is.
