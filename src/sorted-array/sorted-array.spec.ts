@@ -295,7 +295,7 @@ describe("SortedArray", () => {
 
     it("should map list to new list", () => {
         const strAr = ["zz", "yyyyyy", "x"];
-        const numAr = strAr.map(str => str.length).sort((a, b) => a - b);
+        const numAr = strAr.map((str) => str.length).sort((a, b) => a - b);
 
         const stringSortedList = new SortedArray<string>(
             SortedArray.compareStrings,
@@ -311,32 +311,42 @@ describe("SortedArray", () => {
 
     it("should filter list", () => {
         const list = [231, 57498, 12, 2, 456, 7, 65465];
-        const expectedFilteredSorted = list.filter(item => item % 2 === 0).sort((a, b) => a - b);
-        
-        const sortedList = new SortedArray(
-            SortedArray.compareNumbers,
-            list
-        );
+        const expectedFilteredSorted = list
+            .filter((item) => item % 2 === 0)
+            .sort((a, b) => a - b);
 
-        const filteredList = sortedList.filter(item => item % 2 === 0);
+        const sortedList = new SortedArray(SortedArray.compareNumbers, list);
+
+        const filteredList = sortedList.filter((item) => item % 2 === 0);
         expect(filteredList.toArray()).toStrictEqual(expectedFilteredSorted);
     });
 
     it("should get the intersection between two lists", () => {
-
         const strA = ["abc", "d", "ef"];
 
-        const strB = new SortedArray<string>(
-            SortedArray.compareStrings,
-            ["abc", "d", "g"]
-        );
+        const strB = new SortedArray<string>(SortedArray.compareStrings, [
+            "abc",
+            "d",
+            "g",
+        ]);
 
         const intersection = strB.getIntersectionWith(strA);
         expect(intersection.length).toBe(2);
 
         expect(strB.hasSameElementsAs(strA)).toBe(false);
         expect(strB.hasSameElementsAs(strB)).toBe(true);
-
     });
 
+    it("should remove an item", () => {
+        const strList = new SortedArray<string>(SortedArray.compareStrings, [
+            "abc",
+            "d",
+            "g",
+        ]);
+
+        strList.remove("abc");
+
+        expect(strList.length).toBe(2);
+        expect(strList.toArray()).toEqual(["d", "g"]);
+    });
 });

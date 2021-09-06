@@ -5,7 +5,7 @@ import { iSortedList } from "../models/sorted-list";
 export class SortedArray<
     ComparisonType,
     DataType extends ComparisonType = ComparisonType
-    > implements iSortedList<ComparisonType, DataType>
+> implements iSortedList<ComparisonType, DataType>
 {
     //use an array internally to contain the items
     private items: DataType[] = [];
@@ -36,8 +36,8 @@ export class SortedArray<
      */
     static compareFromProperty =
         (propertyName: string, compare: (a: any, b: any) => number) =>
-            (a: any, b: any) =>
-                compare(a[propertyName], b[propertyName]);
+        (a: any, b: any) =>
+            compare(a[propertyName], b[propertyName]);
 
     constructor(
         public compare: (a: ComparisonType, b: ComparisonType) => number,
@@ -74,6 +74,17 @@ export class SortedArray<
     addMany(items: Iterable<DataType>): void {
         for (let item of items) {
             this.add(item);
+        }
+    }
+
+    /**
+     * Remove an item from the list, or do nothing if it isn't in the list
+     * @param item
+     */
+    remove(item: DataType): void {
+        const { index, isMatch } = this.findIndex(item);
+        if (isMatch) {
+            this.items.splice(index, 1);
         }
     }
 
@@ -124,17 +135,23 @@ export class SortedArray<
         this.items.forEach((item, index) => {
             const newItem = callback(item, index);
             sortedAr.add(newItem);
-        })
+        });
         return sortedAr;
     }
 
     /**
      * Return a sorted list based on this one with certain elements removed
-     * @param callback 
+     * @param callback
      */
-    filter(callback: (item: DataType, iteratorIndex: number) => boolean): SortedArray<ComparisonType, DataType> {
-        const filteredAr = this.items.filter((item, index) => callback(item, index));
-        const newSortedArray = new SortedArray<ComparisonType, DataType>(this.compare);
+    filter(
+        callback: (item: DataType, iteratorIndex: number) => boolean
+    ): SortedArray<ComparisonType, DataType> {
+        const filteredAr = this.items.filter((item, index) =>
+            callback(item, index)
+        );
+        const newSortedArray = new SortedArray<ComparisonType, DataType>(
+            this.compare
+        );
         //since we know this list is guaranteed to still be sorted
         //we can apply directly to the new instance
         newSortedArray.items = filteredAr;
@@ -143,9 +160,11 @@ export class SortedArray<
 
     /**
      * Get the intersection between this list and another
-     * @param list 
+     * @param list
      */
-    getIntersectionWith(list: Iterable<DataType>): iSortedList<ComparisonType, DataType> {
+    getIntersectionWith(
+        list: Iterable<DataType>
+    ): iSortedList<ComparisonType, DataType> {
         const intersectionList = new SortedArray<ComparisonType, DataType>(
             this.compare
         );
@@ -159,7 +178,7 @@ export class SortedArray<
 
     /**
      * Check if this has the same elements as another list (not necessarily in the same order)
-     * @param list 
+     * @param list
      */
     hasSameElementsAs(list: Iterable<DataType>): boolean {
         return this.getIntersectionWith(list).length === this.length;
@@ -191,9 +210,7 @@ export class SortedArray<
      * Deep clone this object
      */
     clone(): SortedArray<ComparisonType, DataType> {
-        const newItem = new SortedArray<ComparisonType, DataType>(
-            this.compare
-        );
+        const newItem = new SortedArray<ComparisonType, DataType>(this.compare);
         newItem.items = Clone(this.items);
         return newItem;
     }

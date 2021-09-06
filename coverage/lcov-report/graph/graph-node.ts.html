@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for equality-set/equality-set.ts</title>
+    <title>Code coverage report for graph/graph-node.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">equality-set</a> equality-set.ts</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">graph</a> graph-node.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>20/20</span>
+                <span class='fraction'>37/37</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>20/20</span>
+                <span class='fraction'>37/37</span>
             </div>
         
             
@@ -77,54 +77,102 @@
 <a name='L18'></a><a href='#L18'>18</a>
 <a name='L19'></a><a href='#L19'>19</a>
 <a name='L20'></a><a href='#L20'>20</a>
-<a name='L21'></a><a href='#L21'>21</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a>
+<a name='L26'></a><a href='#L26'>26</a>
+<a name='L27'></a><a href='#L27'>27</a>
+<a name='L28'></a><a href='#L28'>28</a>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { iEqualitySet } from "../models/equality-set";
-import { SortedArray } from "../sorted-array/sorted-array";
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import { EqualitySet } from "../equality-set/equality-set";
+import { iEqualitySet } from "../models/equality-set";
+import { iGraphNode } from "../models/graph-node";
 &nbsp;
-export class EqualitySet&lt;
-        ComparisonType,
-        DataType extends ComparisonType = ComparisonType
-    &gt;
-    extends SortedArray&lt;ComparisonType, DataType&gt;
-    implements iEqualitySet&lt;ComparisonType, DataType&gt;
-{
-    get size(): number {
-        return this.length;
-    }
+export class GraphNode&lt;ComparisonType, DataType extends ComparisonType = ComparisonType&gt; implements iGraphNode&lt;ComparisonType, DataType&gt; {
 &nbsp;
-    add(item: DataType): void {
-        if (!this.contains(item)) {
-            super.add(item);
+    constructor(
+        public compare: (a: ComparisonType, b: ComparisonType) =&gt; number,
+        public nodeValue: DataType
+    ) {}
+&nbsp;
+    /**
+     * A list of nodes this is connected to 
+     */
+    readonly outConnections: iEqualitySet&lt;iGraphNode&lt;ComparisonType, DataType&gt;&gt; = new EqualitySet&lt;iGraphNode&lt;ComparisonType, DataType&gt;&gt;(
+        (a: iGraphNode&lt;ComparisonType, DataType&gt;, b: iGraphNode&lt;ComparisonType, DataType&gt;) =&gt; {
+            return this.compare(a.nodeValue, b.nodeValue)
         }
+    );
+&nbsp;
+    /**
+     * Add a connection to another node from this node
+     * @param node 
+     */
+    addConnectionTo(node: iGraphNode&lt;ComparisonType, DataType&gt;): void {
+        this.outConnections.add(node);
     }
-}
-&nbsp;</pre></td></tr></table></pre>
+&nbsp;
+    /**
+     * Remove a connection to another node from this node if it exists
+     * @param node 
+     */
+    removeConnectionTo(node: iGraphNode&lt;ComparisonType, DataType&gt;): void {
+        this.outConnections.remove(node);
+    }
+&nbsp;
+}</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Sun Sep 05 2021 23:34:03 GMT-0400 (Eastern Daylight Time)
+                at Sun Sep 05 2021 20:20:25 GMT-0400 (Eastern Daylight Time)
             </div>
         </div>
         <script src="../prettify.js"></script>
