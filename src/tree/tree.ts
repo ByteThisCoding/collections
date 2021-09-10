@@ -1,4 +1,5 @@
 import { Graph } from "../graph/graph";
+import { iGraph } from "../models/graph";
 import { iGraphNode } from "../models/graph-node";
 import { iTree } from "../models/tree";
 
@@ -7,8 +8,8 @@ export class Tree<DataType> implements iTree<DataType> {
     //use a graph to represent internally
     private graph = new Graph<DataType>();
 
-    private leafNodeCountChangeMarked = true;
-    private lastLeafNodeCount: number = -1;
+    private leafNodesChangeMarked = true;
+    private lastLeafNodes: iGraphNode<DataType>[] = [];
 
     private depthCountChangeMarked = true;
     private lastDepthCount: number = -1;
@@ -27,18 +28,24 @@ export class Tree<DataType> implements iTree<DataType> {
         return this.graph.nodeCount;
     }
 
-
-    get leafNodeCount(): number {
-        if (this.leafNodeCountChangeMarked) {
+    /**
+     * Get all leaf nodes in this tree
+     */
+    get leafNodes(): iGraphNode<DataType>[] {
+        if (this.leafNodesChangeMarked) {
             const children = this.children;
             if (children.length === 0) {
-                this.lastLeafNodeCount = 1;
+                this.lastLeafNodes = [this.rootNode];
             } else {
-                this.lastLeafNodeCount = children.reduce((acc, child) => acc + child.leafNodeCount, 0);
+                this.lastLeafNodes = children.reduce((arr, child) => [...arr, ...child.leafNodes], [] as iGraphNode<DataType>[]);
             }
-            this.leafNodeCountChangeMarked = false;
+            this.leafNodesChangeMarked = false;
         }
-        return this.lastLeafNodeCount;
+        return this.lastLeafNodes;
+    }
+
+    get leafNodeCount(): number {
+        return this.leafNodes.length;
     }
 
     get depth(): number {
@@ -86,9 +93,17 @@ export class Tree<DataType> implements iTree<DataType> {
         this.markTreeChanged();
     }
 
+
+    /**
+     * Get all paths from the root node to the leaf nodes
+     */
+    enumeratePathsFromRootToLeaves(): iGraphNode<DataType>[][] {
+        return this.leafNodes.map(leafNode => this.rootNode.getPathsToNode(leafNode)).flat();
+    }
+
     private markTreeChanged() {
         this.depthCountChangeMarked = true;
-        this.leafNodeCountChangeMarked = true;
+        this.leafNodesChangeMarked = true;
     }
 
 }

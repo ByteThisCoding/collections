@@ -53,4 +53,36 @@ describe("Graph", () => {
 
         expect(graph.hasCycle()).toBe(true);
     });
+
+    it("should enumerate paths", () => {
+        const graph = new Graph<number>();
+
+        const node17 = new GraphNode<number>(17);
+        const node19 = new GraphNode<number>(19);
+        node17.addConnectionTo(node19);
+
+        graph.addNode(node17);
+
+        //graph with one path
+        const paths17and19 = graph.enumeratePaths();
+        expect(paths17and19.length).toBe(1);
+        expect(paths17and19[0][0].nodeValue).toBe(node17.nodeValue);
+        expect(paths17and19[0][1].nodeValue).toBe(node19.nodeValue);
+
+        //graph with two paths
+        const node20 = new GraphNode(20);
+        node17.addConnectionTo(node20);
+        const paths17and19and20 = graph.enumeratePaths();
+        expect(paths17and19and20.length).toBe(2);
+        expect(paths17and19and20[0][0].nodeValue).toBe(node17.nodeValue);
+        expect(paths17and19and20[0][1].nodeValue).toBe(node19.nodeValue);
+        expect(paths17and19and20[1][0].nodeValue).toBe(node17.nodeValue);
+        expect(paths17and19and20[1][1].nodeValue).toBe(node20.nodeValue);
+
+        //graph with three paths
+        const node50 = new GraphNode(50);
+        node20.addConnectionTo(node50);
+        const finalPaths = graph.enumeratePaths();
+        expect(finalPaths.length).toBe(4);
+    });
 });

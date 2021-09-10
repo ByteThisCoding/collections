@@ -94,4 +94,19 @@ export class Graph<DataType> implements iGraph<DataType> {
             [] as iGraphNode<DataType>[]
         );
     }
+
+    /**
+     * Enumerate all paths which exist in a graph
+     */
+    enumeratePaths(): iGraphNode<DataType>[][] {
+        let paths: iGraphNode<DataType>[][] = [];
+        for (let i=0; i<this.nodes.length; i++) {
+            const nodeFrom = this.nodes[i];
+            for (let j=0; j<this.nodes.length; j++) {
+                const nodeTo = this.nodes[j];
+                paths = [...paths, ...nodeFrom.getPathsToNode(nodeTo)];
+            }
+        }
+        return paths;
+    }
 }

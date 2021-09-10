@@ -44,4 +44,9 @@ export interface iGraph<DataType> {
      * Get an array of cycles which exist in the graph
      */
     getCycles(): iGraphNode<DataType>[];
+
+    /**
+     * Enumerate all paths which exist in a graph
+     */
+    enumeratePaths(): iGraphNode<DataType>[][];
 }

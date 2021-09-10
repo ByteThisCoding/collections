@@ -1,4 +1,4 @@
-import { Clone } from "@byte-this/funscript";
+import { Clone, Equals } from "@byte-this/funscript";
 import { iComparable } from "../models/comparable";
 import { iSortedList } from "../models/sorted-list";
 

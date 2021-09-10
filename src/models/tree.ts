@@ -16,6 +16,11 @@ export interface iTree<DataType> {
 
     leafNodeCount: number;
 
+    /**
+     * Get all leaf nodes in this tree
+     */
+    leafNodes: iGraphNode<DataType>[];
+
     depth: number;
 
     /**
@@ -29,5 +34,11 @@ export interface iTree<DataType> {
      * @param node 
      */
     removeChildNode(node: iGraphNode<DataType>): void;
+
+
+    /**
+     * Get all paths from the root node to the leaf nodes
+     */
+    enumeratePathsFromRootToLeaves(): iGraphNode<DataType>[][];
 
 }

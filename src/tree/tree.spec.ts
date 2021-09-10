@@ -3,7 +3,7 @@ import { Tree } from "./tree";
 
 describe("Tree", () => {
 
-    /*it("should add and remove children", () => {
+    it("should add and remove children", () => {
 
         const tree = new Tree<number>(
             new GraphNode<number>(17)
@@ -28,7 +28,7 @@ describe("Tree", () => {
         expect(tree.nodeCount).toBe(3);
         expect(tree.depth).toBe(2);
         expect(tree.leafNodeCount).toBe(1);
-    });*/
+    });
 
     it("should get count of leaf nodes", () => {
         const tree = new Tree<number>(
@@ -61,7 +61,7 @@ describe("Tree", () => {
         expect(tree.leafNodeCount).toBe(3);
     });
 
-    /*it("should prevent cycles from being added", () => {
+    it("should prevent cycles from being added", () => {
 
         const tree = new Tree<number>(
             new GraphNode<number>(17)
@@ -82,6 +82,29 @@ describe("Tree", () => {
         } catch (err) {}
 
 
-    });*/
+    });
+
+    it("should enumerate paths from root to leaf nodes", () => {
+        const tree = new Tree<number>(
+            new GraphNode<number>(17)
+        );
+
+        const childLevelOne = new GraphNode<number>(11);
+        tree.addChildNode(
+            childLevelOne
+        );
+
+        const childLevelTwo = new GraphNode<number>(111);
+        childLevelOne.addConnectionTo(childLevelTwo);
+
+        const simplePaths = tree.enumeratePathsFromRootToLeaves();
+        expect(simplePaths.length).toBe(1);
+
+        const childLevelOneB = new GraphNode(123);
+        childLevelOne.addConnectionTo(childLevelOneB);
+
+        const simplePathsTwo = tree.enumeratePathsFromRootToLeaves();
+        expect(simplePathsTwo.length).toBe(2);
+    });
 
 });
