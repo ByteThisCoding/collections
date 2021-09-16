@@ -8,7 +8,7 @@ import { iComparable } from "./comparable";
 export interface iSortedList<
     ComparisonType,
     DataType extends ComparisonType = ComparisonType
-> extends Iterator<DataType> {
+> /*extends Iterator<DataType>*/ {
     /**
      * Get the length of the list
      */
@@ -87,6 +87,11 @@ export interface iSortedList<
      * Deep clone this object
      */
     clone(): iSortedList<ComparisonType, DataType>;
+
+    /**
+     * Iterable Interface to allow for of looping
+     */
+    [Symbol.iterator](): IterableIterator<DataType>;
 
     /**
      * Get the intersection between this list and another

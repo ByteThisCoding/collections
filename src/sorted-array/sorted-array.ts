@@ -1,6 +1,7 @@
 import { Clone, Equals } from "@byte-this/funscript";
 import { iComparable } from "../models/comparable";
 import { iSortedList } from "../models/sorted-list";
+import { GeneratorFrom } from "../utils/generator";
 
 export class SortedArray<
     ComparisonType,
@@ -9,7 +10,6 @@ export class SortedArray<
 {
     //use an array internally to contain the items
     private items: DataType[] = [];
-    private iteratorPosition = -1;
 
     /**
      * This can be passed into the constructor to specify sorting by numbers in nondecreasing order
@@ -188,19 +188,12 @@ export class SortedArray<
      * Implement the iterable interface
      * @returns
      */
-    [Symbol.iterator] = () => ({
-        next: (): IteratorResult<DataType> => {
-            return this.next();
-        },
-    });
-
-    next(): IteratorResult<DataType> {
-        this.iteratorPosition++;
-        return {
-            done: this.iteratorPosition === this.items.length,
-            value: this.items[this.iteratorPosition],
-        };
+    *[Symbol.iterator]() {
+        for (let i=0; i<this.items.length; i++) {
+            yield this.items[i];
+        }
     }
+
 
     toArray(): DataType[] {
         return [...this.items];
