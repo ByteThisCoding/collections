@@ -177,6 +177,18 @@ export class SortedArray<
     }
 
     /**
+     * Get an element which is currently at the "index" position
+     * This can change at any time, so use with caution
+     * @param index 
+     * @returns 
+     */
+    getElementCurrentlyAtIndex(
+        index: number
+    ): DataType {
+        return this.items[index];
+    }
+
+    /**
      * Check if this has the same elements as another list (not necessarily in the same order)
      * @param list
      */
