@@ -53,8 +53,15 @@ export interface iGraphNode<DataType> {
     getMinPathLengthToNode(node: iGraphNode<DataType>): number;
 
     /**
+     * Get the shortest path from this node to another node, or -1 if not connected
+     * @param node
+     */
+     getMinPathToNode(node: iGraphNode<DataType>): iGraphNode<DataType>[] | null;
+
+    /**
      * Get all paths from this node to another node
      * @param node
      */
     getPathsToNode(node: iGraphNode<DataType>): iGraphNode<DataType>[][];
+
 }

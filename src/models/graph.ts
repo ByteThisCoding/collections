@@ -49,4 +49,6 @@ export interface iGraph<DataType> {
      * Enumerate all paths which exist in a graph
      */
     enumeratePaths(): iGraphNode<DataType>[][];
+
+    findNodes(callback: (node: iGraphNode<DataType>) => boolean): iGraphNode<DataType>[]
 }

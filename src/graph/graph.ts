@@ -109,4 +109,8 @@ export class Graph<DataType> implements iGraph<DataType> {
         }
         return paths;
     }
+
+    findNodes(callback: (node: iGraphNode<DataType>) => boolean): iGraphNode<DataType>[] {
+        return this.nodes.filter(callback);
+    }
 }

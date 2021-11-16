@@ -73,13 +73,19 @@ export class GraphNode<DataType> implements iGraphNode<DataType> {
      * @param node
      */
     getMinPathLengthToNode(node: GraphNode<DataType>): number {
-        const paths = this.doGetPathsToNode(node, []);
-        return paths.length === 0
-            ? -1
-            : paths.reduce(
-                (minLen, path) => Math.min(minLen, path.length - 1),
-                Infinity
-            );
+        const minPath = this.getMinPathToNode(node);
+        return minPath ? minPath.length - 1 : -1;
+    }
+
+    /**
+     * Get the shortest path from this node to another node, or -1 if not connected
+     * @param node
+     */
+    getMinPathToNode(node: iGraphNode<DataType>): iGraphNode<DataType>[] | null {
+        const paths = this.doGetPathsToNode(node as GraphNode<DataType>, []);
+        return paths === null || paths.length === 0 ? null : paths.reduce(
+            (minPath, path) => path.length < (minPath?.length || Infinity) ? path : minPath
+        );
     }
 
     /**
