@@ -9,6 +9,7 @@ export * from "./src/sorted-array/sorted-array";
 export * from "./src/equality-set/equality-set";
 
 export * from "./src/avl-sorted-list/avl-sorted-list";
+export * from "./src/binary-sorted-list/binary-sorted-list";
 
 export * from "./src/graph/graph-node/graph-node";
 export * from "./src/graph/graph";

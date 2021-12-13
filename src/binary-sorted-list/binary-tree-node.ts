@@ -3,15 +3,10 @@
  * : value
  * : 0-2 children / decendants
  */
-export class AvlTreeNode<DataType> {
-    private _leftNode: AvlTreeNode<DataType>  | null = null;
-    private _rightNode: AvlTreeNode<DataType>  | null = null;
-    private _parentNode: AvlTreeNode<DataType> | null = null;
-
-    public height = 1;
-    public balance = 0;
-    
-    public numDecendants = 0;
+export class BinaryTreeNode<DataType> {
+    private _leftNode: BinaryTreeNode<DataType>  | null = null;
+    private _rightNode: BinaryTreeNode<DataType>  | null = null;
+    private _parentNode: BinaryTreeNode<DataType> | null = null;
 
     //map of item to number of occurences
     public nodeValues = new Map<DataType, number>();
@@ -63,57 +58,40 @@ export class AvlTreeNode<DataType> {
             + (this.rightNode === null ? 0 : 1);
     }
 
-    get leftNode(): AvlTreeNode<DataType>  | null {
+    get leftNode(): BinaryTreeNode<DataType>  | null {
         return this._leftNode;
     }
 
     /**
      * Set the left node and recalculate heights
      */
-    set leftNode(node: AvlTreeNode<DataType>  | null) {
+    set leftNode(node: BinaryTreeNode<DataType>  | null) {
         this._leftNode = node;
         if (node) {
             node.parentNode = this;
         }
-        this.resynchronizeChildren();
     }
 
-    get rightNode(): AvlTreeNode<DataType>  | null {
+    get rightNode(): BinaryTreeNode<DataType>  | null {
         return this._rightNode;
     }
 
     /**
      * Set the right node and recalculate heights
      */
-    set rightNode(node: AvlTreeNode<DataType>  | null) {
+    set rightNode(node: BinaryTreeNode<DataType>  | null) {
         this._rightNode = node;
         if (node) {
             node.parentNode = this;
         }
-        this.resynchronizeChildren();
     }
 
-    get parentNode(): AvlTreeNode<DataType> | null {
+    get parentNode(): BinaryTreeNode<DataType> | null {
         return this._parentNode;
     }
 
-    set parentNode(node: AvlTreeNode<DataType> | null) {
+    set parentNode(node: BinaryTreeNode<DataType> | null) {
         this._parentNode = node;
-    }
-
-    /**
-     * Update height and balance based on child assignments
-     */
-    resynchronizeChildren(): void {
-        const rightNodeHeight = this._rightNode?.height || 0;
-        const leftNodeHeight = this._leftNode?.height || 0;
-        this.balance = leftNodeHeight - rightNodeHeight
-        this.height = 1 + Math.max(leftNodeHeight, rightNodeHeight);
-
-        const numDescLeft = this._leftNode ? 1 + this._leftNode.numDecendants : 0;
-        const numDescRight = this._rightNode ? 1 + this._rightNode.numDecendants : 0;
-
-        this.numDecendants = numDescLeft + numDescRight;
     }
 
 
@@ -121,7 +99,7 @@ export class AvlTreeNode<DataType> {
      * If the input is a direct child of this node,
      * remove it and return true, false otherwise
      */
-    removeChild(childNode: AvlTreeNode<DataType> ): number {
+    removeChild(childNode: BinaryTreeNode<DataType> ): number {
         let removedSide = 0;
         if (this.leftNode === childNode) {
             this.leftNode = null;
@@ -137,8 +115,8 @@ export class AvlTreeNode<DataType> {
      * Clone the node,
      * optionally provide a new value
      */
-    clone(newValues: Map<DataType, number> | void): AvlTreeNode<DataType>  {
-        const newNode = new AvlTreeNode<DataType> (
+    clone(newValues: Map<DataType, number> | void): BinaryTreeNode<DataType>  {
+        const newNode = new BinaryTreeNode<DataType> (
             this.allowDuplicates
         );
         if (newValues) {
@@ -146,7 +124,6 @@ export class AvlTreeNode<DataType> {
         }
         newNode.leftNode = this.leftNode;
         newNode.rightNode = this.rightNode;
-        newNode.resynchronizeChildren();
         return newNode;
     }
 }

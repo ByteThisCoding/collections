@@ -1,13 +1,13 @@
 import { iComparable } from "../models/comparable";
 import { iSortedList } from "../models/sorted-list";
-import { AvlTreeNode } from "./avl-tree-node";
+import { BinaryTreeNode } from "./binary-tree-node";
 
-export class AvlSortedList<
+export class BinarySortedList<
     ComparisonType,
     DataType extends ComparisonType = ComparisonType
     > implements iSortedList<ComparisonType, DataType> {
 
-    /* private? */ rootNode: AvlTreeNode<DataType> | null = null;
+    /* private? */ rootNode: BinaryTreeNode<DataType> | null = null;
 
     /**
      * This can be passed into the constructor to specify sorting by numbers in nondecreasing order
@@ -121,8 +121,8 @@ export class AvlSortedList<
     >(
         sortFunc: (a: NewComparisonType, b: NewComparisonType) => number,
         callback: (item: DataType, iteratorIndex: number) => NewDataType
-    ): AvlSortedList<NewComparisonType, NewDataType> {
-        const newList = new AvlSortedList<NewComparisonType, NewDataType>(sortFunc);
+    ): BinarySortedList<NewComparisonType, NewDataType> {
+        const newList = new BinarySortedList<NewComparisonType, NewDataType>(sortFunc);
         this.forEach((item, ind) => {
             newList.add(
                 callback(item, ind)
@@ -137,8 +137,8 @@ export class AvlSortedList<
      */
     filter(
         callback: (item: DataType, iteratorIndex: number) => boolean
-    ): AvlSortedList<ComparisonType, DataType> {
-        const newList = new AvlSortedList<ComparisonType, DataType>(this.compare);
+    ): BinarySortedList<ComparisonType, DataType> {
+        const newList = new BinarySortedList<ComparisonType, DataType>(this.compare);
         this.forEach((item, ind) => {
             if (callback(item, ind)) {
                 newList.add(
@@ -159,7 +159,7 @@ export class AvlSortedList<
             return;
         }
 
-        const stack: AvlTreeNode<DataType>[] = [];
+        const stack: BinaryTreeNode<DataType>[] = [];
         //iterate recursively via stack
         while (node || stack.length > 0) {
 
@@ -185,8 +185,8 @@ export class AvlSortedList<
     /**
      * Shallow clone the list
      */
-    clone(): AvlSortedList<ComparisonType, DataType> {
-        const newList = new AvlSortedList<ComparisonType, DataType>(this.compare);
+    clone(): BinarySortedList<ComparisonType, DataType> {
+        const newList = new BinarySortedList<ComparisonType, DataType>(this.compare);
         this.forEach((item, ind) => {
             newList.add(
                 item
@@ -201,8 +201,8 @@ export class AvlSortedList<
      */
     getIntersectionWith(
         list: Iterable<DataType>
-    ): AvlSortedList<ComparisonType, DataType> {
-        const intersectionList = new AvlSortedList<ComparisonType, DataType>(
+    ): BinarySortedList<ComparisonType, DataType> {
+        const intersectionList = new BinarySortedList<ComparisonType, DataType>(
             this.compare
         );
         for (let listItem of list) {
@@ -260,8 +260,6 @@ export class AvlSortedList<
                 } else {
                     parentOfNodeToRemove!.rightNode = childOfRemoved;
                 }
-
-                this.rebalanceFromNode(parentOfNodeToRemove!, nodeValue);
             }
         } else {
 
@@ -280,17 +278,15 @@ export class AvlSortedList<
             } else {
                 parentOfNodeToRemove!.rightNode = replacementNode;
             }
-
-            this.rebalanceFromNode(parentOfNodeToRemove!, nodeValue);
         }
 
         return true;
     }
 
-    private helpInsert(node: AvlTreeNode<DataType> | null, nodeValue: DataType): AvlTreeNode<DataType> {
+    private helpInsert(node: BinaryTreeNode<DataType> | null, nodeValue: DataType): BinaryTreeNode<DataType> {
         //base case, node is not set
         if (node === null) {
-            const newNode = new AvlTreeNode<DataType>(this.allowDuplicates);
+            const newNode = new BinaryTreeNode<DataType>(this.allowDuplicates);
             newNode.addValue(nodeValue);
             return newNode;
         }
@@ -305,34 +301,13 @@ export class AvlSortedList<
             node.addValue(nodeValue);
         }
 
-        //check and balance tree if necessary
-        return this.rebalanceFromNode(node, nodeValue);
-    }
-
-    private rebalanceFromNode(node: AvlTreeNode<DataType>, nodeValue: ComparisonType): AvlTreeNode<DataType> {
-        if (node.balance > 1) {
-            if (this.compare(nodeValue, node.leftNode!.getValueForComparison()) < 0) {
-                return this.rotateRight(node);
-            } else if (this.compare(nodeValue, node.leftNode!.getValueForComparison()) > 0) {
-                node.leftNode = this.rotateLeft(node.leftNode!);
-                return this.rotateRight(node);
-            }
-        } else if (node.balance < -1) {
-            if (this.compare(nodeValue, node.rightNode!.getValueForComparison()) > 0) {
-                return this.rotateLeft(node);
-            } else if (this.compare(nodeValue, node.rightNode!.getValueForComparison()) < 0) {
-                node.rightNode = this.rotateRight(node.rightNode!);
-                return this.rotateLeft(node);
-            }
-        }
-
         return node;
     }
 
     /**
      * Find a node within the tree given some node value
      */
-    private findNodeByValue(nodeValue: ComparisonType): AvlTreeNode<DataType> | null {
+    private findNodeByValue(nodeValue: ComparisonType): BinaryTreeNode<DataType> | null {
         //simple case, no nodes yet
         if (!this.rootNode) {
             return null;
@@ -368,53 +343,9 @@ export class AvlSortedList<
     }
 
     /**
-     * Perform a left rotation on baseNode
-     */
-    private rotateLeft(baseNode: AvlTreeNode<DataType>): AvlTreeNode<DataType> {
-        //assign nodes to shift
-        const baseRight = baseNode.rightNode!;
-        const baseRightLeft = baseRight.leftNode!;
-
-        //do rotation
-        baseRight.leftNode = baseNode;
-        baseNode.rightNode = baseRightLeft;
-
-        //update heights
-        baseNode.resynchronizeChildren();
-        baseRight.resynchronizeChildren();
-
-        //return node which has taken prev. position
-        return baseRight;
-    }
-
-    /**
-     * Perform a right rotation on baseNode
-     */
-    private rotateRight(baseNode: AvlTreeNode<DataType>): AvlTreeNode<DataType> {
-        //assign nodes to shift
-        const baseLeft = baseNode.leftNode!;
-        const baseLeftRight = baseLeft.rightNode!;
-
-        //do rotation
-        baseLeft.rightNode = baseNode;
-        baseNode.leftNode = baseLeftRight;
-
-        //do rotation
-        baseLeft.rightNode = baseNode;
-        baseNode.leftNode = baseLeftRight;
-
-        //update heights
-        baseNode.resynchronizeChildren();
-        baseLeft.resynchronizeChildren();
-
-        //return node which has taken prev. position
-        return baseLeft;
-    }
-
-    /**
      * Find the largest node in subtree smaller than root
      */
-    private findLargestSmallerThan(startNode: AvlTreeNode<DataType>): AvlTreeNode<DataType> {
+    private findLargestSmallerThan(startNode: BinaryTreeNode<DataType>): BinaryTreeNode<DataType> {
         const searchValue = startNode.getValueForComparison();
 
         let matchNode = startNode;
