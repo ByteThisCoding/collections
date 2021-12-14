@@ -1,9 +1,8 @@
 import { AvlSortedList } from "../avl-sorted-list/avl-sorted-list";
-import { BinarySortedList } from "../binary-sorted-list/binary-sorted-list";
 import { iComparable } from "../models/comparable";
 import { SortedArray } from "../sorted-array/sorted-array";
 
-export function runSortedListTests(listName: string, listClass: typeof SortedArray | typeof AvlSortedList | typeof BinarySortedList) {
+export function runSortedListTests(listName: string, listClass: typeof SortedArray | typeof AvlSortedList) {
     it("should add numbers to the list and preserve sorting", () => {
         const testItems = [13, 234, 1, 345, -5, 234, 6];
         const testItemsSorted = [...testItems].sort((a, b) => a - b);
