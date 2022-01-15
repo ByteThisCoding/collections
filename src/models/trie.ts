@@ -3,11 +3,26 @@ export interface iTrieWordWithInsertions {
     charInsertions: string[];
 }
 
-export interface iTrie {
+export interface iWordWithData<DataType> {
+    word: string;
+    data: DataType | void;
+}
 
-    addWord(word: string): void;
+export interface iTrie<DataType> {
+
+    addWord(word: string, wordData?: DataType | void): void;
 
     containsWord(word: string): boolean;
+
+    /**
+     * Get the data associated with a trie word node
+     */
+    getWordData(word: string): DataType | void;
+
+    /**
+     * Update the data associated with a word
+     */
+    updateWordData(word: string, wordData: DataType | void): void;
 
     removeWord(word: string): void;
 
@@ -16,6 +31,11 @@ export interface iTrie {
     getAllWords(): string[];
 
     getAllWordsWithPrefix(prefix: string): string[];
+
+    /**
+     * Get all words with prefix and their associated data
+     */
+    getAllWordsDataWithPrefix(prefix: string): iWordWithData<DataType>[];
 
     getRandomWords(numWords: number, minLength?: number, maxLength?: number): string[];
 
@@ -36,4 +56,14 @@ export interface iTrie {
      * Get all words which start with a prefix and end with a suffix
      */
     getAllWordsWithPrefixSuffix(prefix: string, suffix: string): string[];
+
+    /**
+     * Get all words with prefix + suffix and their associated data
+     */
+    getAllWordsDataWithPrefixSuffix(prefix: string, suffix: string): iWordWithData<DataType>[];
+
+    /**
+     * Get an iterable object for this trie
+     */
+    toIterable(): Iterable<iWordWithData<DataType>>;
 }

@@ -48,5 +48,13 @@ export class Queue<DataType> implements iQueue<DataType> {
 
         return nodeValue;
     }
+
+    enqueue(item: DataType): void {
+        this.add(item);
+    }
+
+    dequeue(): DataType | null {
+        return this.poll();
+    }
     
 }

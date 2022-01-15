@@ -5,7 +5,19 @@
  * This can be the end of a word AND a prefix to another word
  * in certain cases, such as "go" and "goat"
  */
-export interface iTrieNode {
+export interface iTrieNode<DataType> {
+
+
+    /**
+     * Get the data this node represents
+     */
+    getNodeData(): DataType | void;
+
+    setNodeData(data: DataType | void): void;
+
+    /**
+     * Get the char this node represents
+     */
     getNodeChar(): string;
 
     /**
@@ -16,12 +28,12 @@ export interface iTrieNode {
     /**
      * Get the node reference for "char"
      */
-    getNextCharNode(char: string): iTrieNode;
+    getNextCharNode(char: string): iTrieNode<DataType>;
 
     /**
      * Get all next char nodes
      */
-    getAllNextCharNodes(): iTrieNode[];
+    getAllNextCharNodes(): iTrieNode<DataType>[];
 
     /**
      * Add a char reference to this node
@@ -57,18 +69,30 @@ export interface iTrieNode {
     getNumNextChars(): number;
 }
 
-export class TrieNode implements iTrieNode {
+export class TrieNode<DataType> implements iTrieNode<DataType> {
 
     //store children using char => trieNode map
     //the char "*" indicates this node represents the end of a word
-    protected nextChars = new Map<string, TrieNode | null>();
+    protected nextChars = new Map<string, TrieNode<DataType> | null>();
 
     constructor(
-        private char: string
+        private char: string,
+        private data?: DataType | void
     ) { }
 
     getNodeChar(): string {
         return this.char;
+    }
+
+    /**
+     * Get the data this node represents
+     */
+    getNodeData(): DataType | void {
+        return this.data;
+    }
+
+    setNodeData(data: DataType | void): void {
+        this.data = data;
     }
 
     getNumNextChars(): number {
@@ -85,15 +109,15 @@ export class TrieNode implements iTrieNode {
     /**
      * Get the node reference for "char"
      */
-    getNextCharNode(char: string): TrieNode {
+    getNextCharNode(char: string): TrieNode<DataType> {
         return this.nextChars.get(char)!;
     }
 
     /**
      * Get all next char nodes
      */
-    getAllNextCharNodes(): TrieNode[] {
-        const nodes: TrieNode[] = [];
+    getAllNextCharNodes(): TrieNode<DataType>[] {
+        const nodes: TrieNode<DataType>[] = [];
         for (const [char, node] of this.nextChars) {
             if (char !== "*") {
                 nodes.push(node!);
@@ -142,6 +166,6 @@ export class TrieNode implements iTrieNode {
      * or has outgoing connections 
      */
     isEmpty(): boolean {
-        return this.nextChars.size === 0;
+        return this.nextChars.size === (this.isEndOfWord() ? 1 : 0);
     }
 }

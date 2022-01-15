@@ -1,5 +1,7 @@
 import { iComparable } from "../models/comparable";
 import { iSortedList } from "../models/sorted-list";
+import { Stack } from "../stack/stack";
+import { iTrieNode } from "../trie/trie-node";
 import { AvlTreeNode } from "./avl-tree-node";
 
 export class AvlSortedList<
@@ -98,6 +100,13 @@ export class AvlSortedList<
         return isRemoved;
     }
 
+    removeAll(comparisonValue: ComparisonType): void {
+        const isRemoved = this.helpRemove(comparisonValue, true);
+        if (isRemoved) {
+            this.numNodes--;
+        }
+    }
+
     /**
      * Run some callback for each item.
      * @param callback : the iterator index does not specify any internal index of the item
@@ -159,9 +168,9 @@ export class AvlSortedList<
             return;
         }
 
-        const stack: AvlTreeNode<DataType>[] = [];
+        const stack = new Stack<AvlTreeNode<DataType>>();
         //iterate recursively via stack
-        while (node || stack.length > 0) {
+        while (node || stack.count > 0) {
 
             //work through the left side
             while (node) {
@@ -230,7 +239,7 @@ export class AvlSortedList<
         return ar;
     }
 
-    private helpRemove(nodeValue: DataType): boolean {
+    private helpRemove(nodeValue: DataType | ComparisonType, isComparisonOnly = false): boolean {
         //find node to remove and alias names
         const nodeToRemove = this.findNodeByValue(nodeValue);
         const parentOfNodeToRemove = nodeToRemove?.parentNode;
@@ -238,9 +247,12 @@ export class AvlSortedList<
         //if node is not present, nothing to do, so return now
         if (nodeToRemove === null) {
             return false;
-        } else if (this.allowDuplicates) {
-            nodeToRemove.removeValue(nodeValue);
-            return true;
+        } else if (!isComparisonOnly) {
+            const isEmpty = nodeToRemove.removeValue(nodeValue as DataType);
+            //if that was the last value in the node, we need to proceed with node deletion
+            if (!isEmpty) {
+                return true;
+            }
         }
 
         //there cases: node has no children, one child, or two children
@@ -301,7 +313,7 @@ export class AvlSortedList<
             node.leftNode = this.helpInsert(node.leftNode, nodeValue);
         } else if (this.compare(nodeValue, node.getValueForComparison()) > 0) {
             node.rightNode = this.helpInsert(node.rightNode, nodeValue);
-        } else if (this.allowDuplicates) {
+        } else {
             node.addValue(nodeValue);
         }
 

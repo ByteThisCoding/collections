@@ -37,3 +37,6 @@ The EqualitySet implementation extends the SortedArray and provides the addition
 ## Graph and Tree
 
 All type definitions for the Graph and Tree (which is based on Graph implementation) can be found in the models folder.
+
+## Project Notes
+The graph implementation is a bit messy. Other implementations are fine.

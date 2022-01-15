@@ -7,6 +7,7 @@ export * from "./src/models/tree";
 export * from "./src/models/queue";
 export * from "./src/models/trie";
 export * from "./src/models/priority-queue";
+export * from "./src/models/stack";
 
 export * from "./src/sorted-array/sorted-array";
 export * from "./src/equality-set/equality-set";
@@ -21,5 +22,8 @@ export * from "./src/tree/tree";
 export * from "./src/queue/queue";
 
 export * from "./src/trie/trie";
+export * from "./src/trie/sorted-trie";
 
 export * from "./src/priority-queue/priority-queue";
+
+export * from "./src/stack/stack";

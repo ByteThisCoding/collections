@@ -1,4 +1,4 @@
-import { Clone } from "@byte-this/funscript";
+import { Clone, Equals } from "@byte-this/funscript";
 import { iComparable } from "../models/comparable";
 import { iSortedList } from "../models/sorted-list";
 import { GeneratorFrom } from "../utils/generator";
@@ -86,6 +86,10 @@ export class SortedArray<
         if (isMatch) {
             this.items.splice(index, 1);
         }
+    }
+
+    removeAll(item: ComparisonType): void {
+        this.items = this.filter(fItem => Equals(fItem, item)).items;
     }
 
     /**

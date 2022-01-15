@@ -1,11 +1,13 @@
-import { iTrie, iTrieWordWithInsertions } from "../models/trie";
+import { iTrie, iTrieWordWithInsertions, iWordWithData } from "../models/trie";
 import { PriorityQueue } from "../priority-queue/priority-queue";
+import { Queue } from "../queue/queue";
+import { Stack } from "../stack/stack";
 import { iTrieNode, TrieNode } from "./trie-node";
 
 /**
  * A custom implementation of a trie data structure
  */
-export abstract class AbstractTrie implements iTrie {
+export abstract class AbstractTrie<DataType> implements iTrie<DataType> {
 
     //the root node will be a special empty node
     private rootNode = this.createNode("");
@@ -22,7 +24,7 @@ export abstract class AbstractTrie implements iTrie {
      * Create a new Trie node
      * Subclass can override for more specificity
      */
-    protected abstract createNode(char: string): iTrieNode;
+    protected abstract createNode(char: string): iTrieNode<DataType>;
 
     getLongestWordLength(): number {
         return this.longestWordLengths.peek() || 0;
@@ -36,8 +38,8 @@ export abstract class AbstractTrie implements iTrie {
      * Recursively update nodes within the trie
      * Do nothing if the word already exists
      */
-    addWord(word: string): void {
-        this.doAddWord(word);  
+    addWord(word: string, wordData?: DataType | void): void {
+        this.doAddWord(word, wordData);
     }
 
     /**
@@ -45,8 +47,8 @@ export abstract class AbstractTrie implements iTrie {
      * @param word 
      * @returns 
      */
-    protected doAddWord(word: string): iTrieNode | null {
-        let node: iTrieNode = this.rootNode;
+    protected doAddWord(word: string, wordData?: DataType | void): iTrieNode<DataType> | null {
+        let node: iTrieNode<DataType> = this.rootNode;
 
         //iterate through the nodes until the word is complete
         for (let i = 0; i < word.length; i++) {
@@ -64,6 +66,7 @@ export abstract class AbstractTrie implements iTrie {
         //mark the final node as the end of a word if it isn't already
         if (!node.isEndOfWord()) {
             node.markAsEndOfWord();
+            node.setNodeData(wordData);
             this.numWords++;
 
             //add to priority queue if length is not in map
@@ -79,7 +82,7 @@ export abstract class AbstractTrie implements iTrie {
                 word.length,
                 1 + currentCount
             );
-            
+
             return node;
         }
 
@@ -87,9 +90,33 @@ export abstract class AbstractTrie implements iTrie {
     }
 
     /**
+     * Get the data associated with a trie word node
+     * 
+     * Recursively iterate to get the data
+     */
+    getWordData(word: string): DataType | void {
+        const node = this.getWordNode(word);
+        return node ? node.getNodeData() : void 0;
+    }
+
+    /**
      * Recursively check if a word exists implicitly in the trie
      */
     containsWord(word: string): boolean {
+        return this.getWordNode(word) !== null;
+    }
+
+    /**
+     * Update the data associated with a word
+     */
+    updateWordData(word: string, wordData: DataType | void): void {
+        const node = this.getWordNode(word);
+        if (node) {
+            node.setNodeData(wordData);
+        }
+    }
+
+    private getWordNode(word: string): iTrieNode<DataType> | null {
         let isSearching = true;
         let node = this.rootNode;
 
@@ -104,27 +131,30 @@ export abstract class AbstractTrie implements iTrie {
             }
         }
 
-        return isSearching && node.isEndOfWord();
+        if (isSearching && node.isEndOfWord()) {
+            return node;
+        }
+        return null;
     }
 
     /**
      * Recursively remove a word while leaving other words in-tact
      */
     removeWord(word: string): void {
-        
+        this.doRemoveWord(word);
     }
 
     /**
      * Remove a word and return the deleted nodes
      */
-    protected doRemoveWord(word: string): iTrieNode[] {
+    protected doRemoveWord(word: string): iTrieNode<DataType>[] {
         let isSearching = true;
         let node = this.rootNode;
-        const deletedNodes: iTrieNode[] = [];
+        const deletedNodes: iTrieNode<DataType>[] = [];
 
         //use an array as a quick stack implementation option
         //linked list based stack may perform better
-        const nodeStack: iTrieNode[] = [];
+        const nodeStack: iTrieNode<DataType>[] = [];
 
         //iterate through trie to find the end of word marking
         for (let i = 0; isSearching && i < word.length; i++) {
@@ -167,7 +197,7 @@ export abstract class AbstractTrie implements iTrie {
             }
 
             //loop through stack and delete char by char in reverse
-            let prevNode: iTrieNode;
+            let prevNode: iTrieNode<DataType>;
             while (nodeStack.length > 0) {
                 prevNode = node;
                 node = nodeStack.pop()!;
@@ -205,9 +235,80 @@ export abstract class AbstractTrie implements iTrie {
     }
 
     /**
+     * Get all words with prefix and their associated data
+     */
+    getAllWordsDataWithPrefix(prefix: string): iWordWithData<DataType>[] {
+        return this.getAllWordsDataWithPrefixSuffix(prefix, "");
+    }
+
+    /**
      * Get all words which start with a prefix and end with a suffix
      */
     getAllWordsWithPrefixSuffix(prefix: string, suffix: string): string[] {
+        let node = this.findEndPrefixNode(prefix);
+
+        //if prefix doesn't exist in tree, return empty array
+        if (!node) {
+            return [];
+        }
+
+        //otherwise, recursively determine words by depth first search
+        const words: string[] = [];
+        this.recursiveFindWordsAfterPrefix(node, false, prefix, suffix, words);
+
+        return words;
+    }
+
+    /**
+     * Get all words with prefix + suffix and their associated data
+     */
+    getAllWordsDataWithPrefixSuffix(prefix: string, suffix: string): iWordWithData<DataType>[] {
+        let node = this.findEndPrefixNode(prefix);
+
+        //if prefix doesn't exist in tree, return empty array
+        if (!node) {
+            return [];
+        }
+
+        //otherwise, recursively determine words by depth first search
+        const words: iWordWithData<DataType>[] = [];
+        this.recursiveFindWordsAfterPrefix(node, true, prefix, suffix, words);
+
+        return words;
+    }
+
+    /**
+     * Recursively find words given a prefix (depth first search)
+     * Modifies words array in place
+     */
+    private recursiveFindWordsAfterPrefix(
+        node: iTrieNode<DataType>,
+        includeData: boolean,
+        prefix: string,
+        suffix: string,
+        words: string[] | iWordWithData<DataType>[]
+    ): void {
+        if (node.isEndOfWord() && (!suffix || prefix.substring(suffix.length) === suffix)) {
+            if (includeData) {
+                (words as iWordWithData<DataType>[]).push({
+                    word: prefix,
+                    data: node.getNodeData()
+                })
+            } else {
+                (words as string[]).push(prefix);
+            }
+        }
+
+        for (const nextNode of node.getAllNextCharNodes()) {
+            const nextPrefix = prefix + nextNode.getNodeChar();
+            this.recursiveFindWordsAfterPrefix(nextNode, includeData, nextPrefix, suffix, words);
+        }
+    }
+
+    /**
+     * Given a prefix, find the last node corresponding to the last char of that prefix
+     */
+    private findEndPrefixNode(prefix: string): iTrieNode<DataType> | null {
         let isSearching = true;
         let node = this.rootNode;
 
@@ -223,42 +324,7 @@ export abstract class AbstractTrie implements iTrie {
         }
 
         //if prefix doesn't exist in tree, return empty array
-        if (!isSearching) {
-            return [];
-        }
-
-        //otherwise, recursively determine words by breadth first search
-        const words: string[] = [];
-
-        //we'll use an array for convenience
-        //but a linked list would be more performant
-        const nodeQueue: iTrieNode[] = [];
-        const queuePrefixes: string[] = [];
-
-        //use breadth first search to find words
-        while (true) {
-            const nextNodes = node.getAllNextCharNodes();
-
-            for (const nextNode of nextNodes) {
-                nodeQueue.push(nextNode);
-                queuePrefixes.push(prefix + nextNode.getNodeChar());
-            }
-
-            if (node.isEndOfWord() && (!suffix || prefix.substring(suffix.length) === suffix)) {
-                words.push(prefix);
-            }
-
-            //if queue is empty, stop
-            if (nodeQueue.length === 0) {
-                break;
-            }
-
-            //get from queue for next iteration
-            node = nodeQueue.shift()!;
-            prefix = queuePrefixes.shift()!;
-        }
-
-        return words;
+        return isSearching ? node : null;
     }
 
     /**
@@ -272,7 +338,7 @@ export abstract class AbstractTrie implements iTrie {
     }
 
     private searchWordsCharacters(
-        node: iTrieNode,
+        node: iTrieNode<DataType>,
         prefix: string,
         prefixInsertions: string[],
         wordsList: iTrieWordWithInsertions[],
@@ -281,7 +347,7 @@ export abstract class AbstractTrie implements iTrie {
     ): void {
         //iterate over each char available in chars
         const visitedChars = new Set<string>();
-        for (let cIndex=0; cIndex<chars.length; cIndex++) {
+        for (let cIndex = 0; cIndex < chars.length; cIndex++) {
             if (!visitedChars.has(chars[cIndex])) {
                 visitedChars.add(chars[cIndex]);
 
@@ -310,7 +376,7 @@ export abstract class AbstractTrie implements iTrie {
                         const newPrefix = prefix + nextNode.getNodeChar();
                         const remainingChars = [...chars];
                         remainingChars.splice(cIndex, 1);
-        
+
                         //if this is the last char, or !mustIncludeAll, add word
                         if (nextNode.isEndOfWord() && (!mustIncludeAll || chars.length === 1)) {
                             wordsList.push({
@@ -318,7 +384,7 @@ export abstract class AbstractTrie implements iTrie {
                                 charInsertions: prefixInsertions
                             });
                         }
-        
+
                         this.searchWordsCharacters(nextNode, newPrefix, prefixInsertions, wordsList, remainingChars, mustIncludeAll);
                     }
                 }
@@ -342,7 +408,7 @@ export abstract class AbstractTrie implements iTrie {
         return Array.from(words);
     }
 
-    private getRandomWord(node: iTrieNode, prefix: string, minLength: number, maxLength: number, includedSet: Set<string>): string | null {
+    private getRandomWord(node: iTrieNode<DataType>, prefix: string, minLength: number, maxLength: number, includedSet: Set<string>): string | null {
         //invalid state, return null
         if (prefix.length >= maxLength) {
             return null;
@@ -385,7 +451,7 @@ export abstract class AbstractTrie implements iTrie {
 
         //we'll use an array for convenience
         //but a linked list would be more performant
-        const nodeQueue: iTrieNode[] = [];
+        const nodeQueue: iTrieNode<DataType>[] = [];
         const queuePrefixes: string[] = [];
 
         //prefix for current word being iterated
@@ -401,7 +467,10 @@ export abstract class AbstractTrie implements iTrie {
             }
 
             if (node.isEndOfWord()) {
-                yield prefix;
+                yield {
+                    word: prefix,
+                    data: node.getNodeData()
+                };
             }
 
             //if queue is empty, stop
@@ -437,4 +506,12 @@ export abstract class AbstractTrie implements iTrie {
 
         return array;
     }
+
+    /**
+     * Get an iterable object for this trie
+     */
+    toIterable(): Iterable<iWordWithData<DataType>> {
+        return this[Symbol.iterator]();
+    }
 }
+

@@ -31,6 +31,11 @@ export interface iSortedList<
     remove(item: DataType): void;
 
     /**
+     * Remove all items which satisfy the comparison type
+     */
+    removeAll(item: ComparisonType): void;
+
+    /**
      * Add many items to this sorted list at once
      * @param items
      */
