@@ -6,7 +6,7 @@ import { GeneratorFrom } from "../utils/generator";
 export class SortedArray<
     ComparisonType,
     DataType extends ComparisonType = ComparisonType
-> implements iSortedList<ComparisonType, DataType>
+    > implements iSortedList<ComparisonType, DataType>
 {
     //use an array internally to contain the items
     private items: DataType[] = [];
@@ -36,8 +36,8 @@ export class SortedArray<
      */
     static compareFromProperty =
         (propertyName: string, compare: (a: any, b: any) => number) =>
-        (a: any, b: any) =>
-            compare(a[propertyName], b[propertyName]);
+            (a: any, b: any) =>
+                compare(a[propertyName], b[propertyName]);
 
     constructor(
         public compare: (a: ComparisonType, b: ComparisonType) => number,
@@ -59,7 +59,7 @@ export class SortedArray<
      * Add a single item to the list
      */
     add(item: DataType): void {
-        const { index } = this.findIndex(item);
+        const { index } = SortedArray.binarySearch(item, this.items, this.compare);
         this.items = [
             ...this.items.slice(0, index),
             item,
@@ -82,7 +82,7 @@ export class SortedArray<
      * @param item
      */
     remove(item: DataType): void {
-        const { index, isMatch } = this.findIndex(item);
+        const { index, isMatch } = SortedArray.binarySearch(item, this.items, this.compare);
         if (isMatch) {
             this.items.splice(index, 1);
         }
@@ -97,7 +97,7 @@ export class SortedArray<
      * @param item
      */
     contains(item: ComparisonType): boolean {
-        return this.findIndex(item).isMatch;
+        return SortedArray.binarySearch(item, this.items, this.compare).isMatch;
     }
 
     /**
@@ -105,7 +105,7 @@ export class SortedArray<
      * @param item
      */
     find(item: ComparisonType): DataType | null {
-        const { isMatch, index } = this.findIndex(item);
+        const { isMatch, index } = SortedArray.binarySearch(item, this.items, this.compare);
         if (isMatch) {
             return this.items[index];
         } else {
@@ -205,7 +205,7 @@ export class SortedArray<
      * @returns
      */
     *[Symbol.iterator]() {
-        for (let i=0; i<this.items.length; i++) {
+        for (let i = 0; i < this.items.length; i++) {
             yield this.items[i];
         }
     }
@@ -224,13 +224,13 @@ export class SortedArray<
         return newItem;
     }
 
-    private findIndex(item: ComparisonType): {
+    public static binarySearch<T>(item: T, items: T[], compare: (a: T, b: T) => number): {
         index: number;
         isMatch: boolean;
     } {
         //we will begin by including all elements in the array for consideration
         let start = 0;
-        let end = this.items.length;
+        let end = items.length;
 
         //be careful when using while (true)
         while (true) {
@@ -252,7 +252,7 @@ export class SortedArray<
             }
 
             //compare the string we're looking for to the item in ar[pos]
-            const comp = this.compare(item, this.items[pos]);
+            const comp = compare(item, items[pos]);
 
             //if we've found our item, return the pos
             if (comp === 0) {
