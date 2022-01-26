@@ -32,7 +32,5 @@ export class Stack<DataType> implements iStack<DataType> {
         this.head = this.head.next;
 
         return nodeValue;
-
     }
-    
 }

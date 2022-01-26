@@ -5,5 +5,4 @@ export class StackNode<DataType> {
     constructor(
         public readonly value: DataType
     ) {}
-
 }
