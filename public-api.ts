@@ -8,6 +8,7 @@ export * from "./src/models/queue";
 export * from "./src/models/trie";
 export * from "./src/models/priority-queue";
 export * from "./src/models/stack";
+export * from "./src/models/linked-list";
 
 export * from "./src/sorted-array/sorted-array";
 export * from "./src/equality-set/equality-set";
@@ -27,3 +28,5 @@ export * from "./src/trie/sorted-trie";
 export * from "./src/priority-queue/priority-queue";
 
 export * from "./src/stack/stack";
+
+export * from "./src/linked-list/linked-list";
