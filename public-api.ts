@@ -13,6 +13,8 @@ export * from "./src/models/linked-list";
 export * from "./src/sorted-array/sorted-array";
 export * from "./src/equality-set/equality-set";
 
+export * from "./src/linked-list/linked-list";
+
 export * from "./src/avl-sorted-list/avl-sorted-list";
 
 export * from "./src/graph/graph-node/graph-node";

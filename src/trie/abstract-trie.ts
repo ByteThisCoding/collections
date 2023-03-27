@@ -392,6 +392,9 @@ export abstract class AbstractTrie<DataType> implements iTrie<DataType> {
         }
     }
 
+    /**
+     * Randomly find words throughout the trie
+     */
     getRandomWords(numWords: number, minLength = 0, maxLength = Infinity): string[] {
         //if the input params are invalid, return immediately
         if (this.getNumWords() === 0 || minLength > this.getLongestWordLength() || maxLength < this.getShortestWordLength()) {
@@ -399,7 +402,7 @@ export abstract class AbstractTrie<DataType> implements iTrie<DataType> {
         }
 
         const words = new Set<string>();
-        for (let i = 0; i < numWords; i++) {
+        for (let i = 0; words.size < numWords && i < this.numWords; i++) {
             const randomWord = this.getRandomWord(this.rootNode, "", minLength, maxLength, words);
             if (randomWord) {
                 words.add(randomWord);
@@ -417,7 +420,7 @@ export abstract class AbstractTrie<DataType> implements iTrie<DataType> {
         prefix = prefix + node.getNodeChar();
         let children = [...node.getAllNextCharNodes()];
         //if this is a word and we're within length range
-        if (prefix.length > minLength && prefix.length < maxLength && !includedSet.has(prefix)) {
+        if (prefix.length >= minLength && prefix.length <= maxLength && !includedSet.has(prefix)) {
             //if no children, return this current word
             if (children.length === 0 && node.isEndOfWord()) {
                 return prefix;
